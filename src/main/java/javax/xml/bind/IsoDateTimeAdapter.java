@@ -3,9 +3,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class IsoDateTimeFormatter extends TemporalAdapter<ZonedDateTime>{
+public class IsoDateTimeAdapter extends TemporalAdapter<ZonedDateTime>{
 
-	public IsoDateTimeFormatter() {
+	public IsoDateTimeAdapter() {
 		super(DateTimeFormatter.ISO_DATE_TIME);
 	}
 
