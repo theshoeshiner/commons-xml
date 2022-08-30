@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.io.IOUtils;
@@ -27,7 +30,11 @@ public class SLF4JLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 	protected Logger logger;
 
 	public SLF4JLoggingHandler() {
-		logger = LOGGER;
+		this(LOGGER);
+	}
+	
+	public SLF4JLoggingHandler(Logger l) {
+		logger = l;
 	}
 	
     public Set<QName> getHeaders() {
@@ -36,10 +43,10 @@ public class SLF4JLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 
     public boolean handleMessage(SOAPMessageContext context) {
     	
-    	if(LOGGER.isDebugEnabled()) {
+    	if(logger.isDebugEnabled()) {
     	
 	        Boolean isRequest = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-	        LOGGER.debug(isRequest?"REQUEST":"RESPONSE");
+	        logger.debug(isRequest?"REQUEST":"RESPONSE");
 	  
 	        SOAPMessage message = context.getMessage();
 	        try {
@@ -54,12 +61,12 @@ public class SLF4JLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 	            	
 	            	String s = sw.toString();
 	            	
-	            	LOGGER.debug(s);
+	            	logger.debug(s);
 
 	            
 	        } 
 	        catch (SOAPException | IOException e) {
-	        	LOGGER.warn("Could not log",e);
+	        	logger.warn("Could not log",e);
 	        }
         
     	}
@@ -73,5 +80,15 @@ public class SLF4JLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 
     public void close(MessageContext messageContext) {}
     
+    @SuppressWarnings("rawtypes")
+    public static void addToBindingProvider(BindingProvider bp,Logger logger) {
+    	List<Handler> handlerChain = bp.getBinding().getHandlerChain();
+		handlerChain.add(new SLF4JLoggingHandler(logger));
+		(bp).getBinding().setHandlerChain(handlerChain);
+    }
+    
+    public static void addToBindingProvider(BindingProvider bp) {
+    	addToBindingProvider(bp,LOGGER);
+    }
 
 }
