@@ -11,8 +11,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * This can parse ISO dates that do/dont have a timezone, to match some XSD types
- * If the timezone is missing it uses the system default timezone
- * @author daniel.watson
+ * If the timezone is missing it uses UTC or uses the parameter passed in constructor
  *
  */
 public class LooseIsoDateTimeAdapter extends XmlAdapter<String,ZonedDateTime> {
