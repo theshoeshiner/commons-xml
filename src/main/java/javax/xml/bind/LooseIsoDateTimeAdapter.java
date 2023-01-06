@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 public class LooseIsoDateTimeAdapter extends XmlAdapter<String,ZonedDateTime> {
 	
 	protected ZoneId defaultZone;
+	protected DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 	
 	public LooseIsoDateTimeAdapter() {
 		this(ZoneId.of("Z"));
@@ -29,7 +30,7 @@ public class LooseIsoDateTimeAdapter extends XmlAdapter<String,ZonedDateTime> {
 	@Override
 	public String marshal(ZonedDateTime v) throws Exception {
 		if(v==null) return null;
-		else return DateTimeFormatter.ISO_DATE_TIME.format(v);
+		else return formatter.format(v);
 	}
 	
 	@Override
@@ -37,7 +38,7 @@ public class LooseIsoDateTimeAdapter extends XmlAdapter<String,ZonedDateTime> {
 		
 		if(v==null) return null;
 		v = v.trim();
-		TemporalAccessor ta = DateTimeFormatter.ISO_DATE_TIME.parse(v);
+		TemporalAccessor ta = formatter.parse(v);
 		ZonedDateTime zdt = ta.query(q -> {
 			if(q.isSupported(ChronoField.OFFSET_SECONDS))return ZonedDateTime.from(q);
 			else return ZonedDateTime.of(LocalDateTime.from(q),defaultZone);
