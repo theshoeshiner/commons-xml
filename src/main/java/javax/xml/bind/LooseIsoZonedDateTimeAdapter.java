@@ -2,26 +2,22 @@ package javax.xml.bind;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 
-/**
- * This can parse ISO dates that do/dont have a timezone, to match some XSD types
- * If the timezone is missing it uses UTC or uses the parameter passed in constructor
- *
- */
-public class LooseIsoDateTimeAdapter extends TemporalAdapter<ZonedDateTime> {
+public class LooseIsoZonedDateTimeAdapter extends TemporalAdapter<ZonedDateTime> {
 	
 	protected ZoneId defaultZone;
 	
-	public LooseIsoDateTimeAdapter() {
-		this(ZoneId.of("Z"));
+	public LooseIsoZonedDateTimeAdapter() {
+		this(ZoneOffset.UTC);
 	}
 	
-	public LooseIsoDateTimeAdapter(ZoneId defaultZone) {
-		super(DateTimeFormatter.ISO_OFFSET_DATE_TIME,ZonedDateTime::from);
+	public LooseIsoZonedDateTimeAdapter(ZoneId defaultZone) {
+		super(DateTimeFormatter.ISO_DATE_TIME,ZonedDateTime::from);
 		this.defaultZone = defaultZone;
 	}
 
